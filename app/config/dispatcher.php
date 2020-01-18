@@ -3,25 +3,23 @@
 use Phalcon\Events\Event;
 use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Mvc\Dispatcher;
+use Phalcon\Http\Request;
+use App\Exceptions\UnauthorizedException;
+use App\Services\UserService;
 
 $dispatcher    = new Dispatcher();
 $eventsManager = new EventsManager;
+$request       = new Request();
+$userService   = new UserService();
 
-$eventsManager->attach('dispatch:beforeExecuteRoute',
-    function (Event $event) use($dispatcher, $userId) {
+$eventsManager->attach('dispatch:beforeExecuteRoute', function () use($request, $userService) 
+{
+    $userId = $request->getHeader('userId');
 
-        $request  = new Phalcon\Http\Request();
-        $response = new Phalcon\Http\Response();
-        $userId   = $request->getHeader('userId');
-
-        if($userId == 1) {
-            $response->setStatusCode(401);
-            $response->setContentType('application/json');
-            $response->setJsonContent(['message' => 'Unauthorized']);
-            $response->send();
-            return false;
-        }
+    if(!$userId || !$userService->isUserExist($userId)) {
+        throw new UnauthorizedException();
     }
-);
+});
+
 $dispatcher->setEventsManager($eventsManager);
 return $dispatcher;

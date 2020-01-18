@@ -13,6 +13,8 @@ $loader->registerDirs(
 )
 ->registerNamespaces([
     'App\Models'       => dirname(__DIR__).'/models/',
-    'App\Transformers' => dirname(__DIR__).'/transformers/'
+    'App\Transformers' => dirname(__DIR__).'/transformers/',
+    'App\Exceptions'   => dirname(__DIR__).'/exceptions/',
+    'App\Services'     => dirname(__DIR__).'/services/',
 ])
 ->register();
