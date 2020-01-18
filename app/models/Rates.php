@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Email as EmailValidator;
+use Phalcon\Validation\Validator\Uniqueness as UniquenessValidator;
+
 class Rates extends \Phalcon\Mvc\Model
 {
 
@@ -28,6 +32,26 @@ class Rates extends \Phalcon\Mvc\Model
      * @var integer
      */
     public $rate;
+
+    /**
+     * Validations and business logic
+     *
+     * @return boolean
+     */
+    public function validation()
+    {
+        $validator = new Validation();
+
+        $validator->add(
+            [
+                "product_id",
+                "user_id",
+            ],
+            new UniquenessValidator()
+        );
+
+        return $this->validate($validator);
+    }
 
     /**
      * Initialize method for model.

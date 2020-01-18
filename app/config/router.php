@@ -2,7 +2,6 @@
 
 use Phalcon\Mvc\Router;
 use Phalcon\Mvc\Router\Group;
-use Phalcon\Events\Manager as EventsManager;
 
 // Create the router
 $router   = new Router(false);
@@ -38,15 +37,8 @@ $apiGroup->addPost('/:controller/([0-9]+)', array(
     "id"         => 2,
 ));
 
+
 $router->removeExtraSlashes(true);
 $router->mount($apiGroup);
-
-
-$eventsManager = new EventsManager();
-$eventsManager->fire('router:beforeCheckRoutes', function(){
-    $ControllerBase = new ControllerBase();
-    return $ControllerBase->sendJson([], 100);
-});
-$router->setEventsManager( $eventsManager );
 
 return $router;
