@@ -48,8 +48,8 @@ class Products extends \Phalcon\Mvc\Model
     {
         $this->setSchema("cubicfox_task_db");
         $this->setSource("products");
-        $this->hasMany('id', 'Rates', 'product_id', ['alias' => 'Rates']);
-        $this->belongsTo('user_id', 'Users', 'id', ['alias' => 'Users']);
+        $this->hasMany('id', 'App\Models\Rates', 'product_id', ['alias' => 'Rates']);
+        $this->belongsTo('user_id', 'App\Models\Users', 'id', ['alias' => 'Users']);
     }
 
     /**

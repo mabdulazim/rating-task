@@ -36,8 +36,8 @@ class Rates extends \Phalcon\Mvc\Model
     {
         $this->setSchema("cubicfox_task_db");
         $this->setSource("rates");
-        $this->belongsTo('user_id', 'Users', 'id', ['alias' => 'Users']);
-        $this->belongsTo('product_id', 'Products', 'id', ['alias' => 'Products']);
+        $this->belongsTo('user_id', 'App\Models\Users', 'id', ['alias' => 'Users']);
+        $this->belongsTo('product_id', 'App\Models\Products', 'id', ['alias' => 'Products']);
     }
 
     /**

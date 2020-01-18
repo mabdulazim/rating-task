@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Models;
+
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 
@@ -53,8 +55,8 @@ class Users extends \Phalcon\Mvc\Model
     {
         $this->setSchema("cubicfox_task_db");
         $this->setSource("users");
-        $this->hasMany('id', 'Products', 'user_id', ['alias' => 'Products']);
-        $this->hasMany('id', 'Rates', 'user_id', ['alias' => 'Rates']);
+        $this->hasMany('id', 'App\Models\Products', 'user_id', ['alias' => 'Products']);
+        $this->hasMany('id', 'App\Models\Rates', 'user_id', ['alias' => 'Rates']);
     }
 
     /**
