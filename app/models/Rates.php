@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Phalcon\Validation;
-use Phalcon\Validation\Validator\Email as EmailValidator;
 use Phalcon\Validation\Validator\Uniqueness as UniquenessValidator;
+use Phalcon\Validation\Validator\Between;
 
 class Rates extends \Phalcon\Mvc\Model
 {
@@ -47,7 +47,20 @@ class Rates extends \Phalcon\Mvc\Model
                 "product_id",
                 "user_id",
             ],
-            new UniquenessValidator()
+            new UniquenessValidator([
+                'message' => 'You already rated this product before'
+            ])
+        );
+
+        $validator->add(
+            "rate",
+            new Between(
+                [
+                    "minimum" => 1,
+                    "maximum" => 10,
+                    "message" => "The rate must be between 1 and 10",
+                ]
+            )
         );
 
         return $this->validate($validator);

@@ -6,17 +6,17 @@ use Phalcon\Http\Response;
 
 class BadRequestException
 {
-    public function __construct()
+    public function __construct($message = "Bad Request")
     {
-        $this->handle();
+        $this->handle($message);
     }
 
-    public function handle()
+    public function handle($message)
     {
         $response = new Response();
-        $response->setStatusCode(401);
+        $response->setStatusCode(400);
         $response->setContentType('application/json');
-        $response->setJsonContent(['message' => 'Unauthorized']);
+        $response->setJsonContent(['message' => $message]);
         $response->send();
         return $false;
     }

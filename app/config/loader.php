@@ -16,5 +16,7 @@ $loader->registerDirs(
     'App\Transformers' => dirname(__DIR__).'/transformers/',
     'App\Exceptions'   => dirname(__DIR__).'/exceptions/',
     'App\Services'     => dirname(__DIR__).'/services/',
+    'App\Repositories' => dirname(__DIR__).'/repositories/',
+    'App\DTOs'         => dirname(__DIR__).'/dtos/',
 ])
 ->register();

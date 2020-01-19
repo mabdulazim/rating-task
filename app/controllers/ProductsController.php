@@ -1,87 +1,96 @@
 <?php
 
 use Phalcon\Paginator\Adapter\Model as PaginatorModel;
+
+use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 use League\Fractal\Pagination\PhalconFrameworkPaginatorAdapter;
 use App\Transformers\ProductTransformer;
 use App\Transformers\Serializer;
-use League\Fractal\Manager;
-use App\Models\Products;
+
+use App\DTOs\ProductDTO;
+use App\Services\ProductService;
 
 class ProductsController extends ControllerBase
 {
+    private $productService;
+    private $fractal;
+
+    public function onConstruct() 
+    {
+        $this->productService = new ProductService();
+        $this->fractal = new Manager();
+        $this->fractal->setSerializer(new Serializer());
+    }
 
     public function indexAction()
     {
+        // REQUEST PARAMS
         $page   = $this->request->getQuery('page', 'int', 1);
-        $code   = $this->request->getQuery('code', 'int', null);
         $limit  = $this->request->getQuery('limit', 'int', 10);
+        $code   = $this->request->getQuery('code', 'int', null);
         $userId = $this->request->getHeader('userId');
 
-        $data = !$code ? Products::find() : Products::find([
-            'conditions' => "code LIKE '%$code%'"
-        ]);
+        // GER PRODUCTS
+        $products = $this->productService->getProducts($code);
 
+        // HANDLE PAGINATION
         $paginator = new PaginatorModel([
-            "data"  => $data,
+            "data"  => $products,
             "limit" => $limit,
             "page"  => $page,
         ]);
-
         $products = $paginator->getPaginate();
 
+        // HANDLE TRANSFORMER
         $resource = new Collection($products->items, new ProductTransformer($userId));
         $resource->setPaginator(new PhalconFrameworkPaginatorAdapter($products));
-        $fractal = new Manager();
-        $resource = $fractal->createData($resource)->toArray();
+        $products = $this->fractal
+        ->createData($resource)
+        ->toArray();
 
-        return $this->sendJson($resource, 200);
+        // RETURN RESPONSE
+        $this->jsonResponse($products, 200);
     }
 
     public function showAction()
     {
-        $userId = $this->request->getHeader('userId');
+        // REQUEST PARAMS
+        $userId    = $this->request->getHeader('userId');
+        $productId = $this->dispatcher->getParam('id');
 
-        $id = $this->dispatcher->getParam('id');
-        $product = Products::findFirst([
-            'conditions' => "id = $id",
-        ]);
+        // GET PRODUCT BY ID
+        $product = $this->productService->getProductById($productId);
 
-        if(!$product)
-            return $this->notFoundResponse();
-
+        // TRANSFORMER PRODUCT OBJECT
         $product = new Item($product, new ProductTransformer($userId));
-        $fractal = new Manager();
-        $fractal->setSerializer(new Serializer());
-        $fractal->parseIncludes('rates');
-        $product = $fractal->createData($product)->toArray();
+        $product = $this->fractal
+        ->parseIncludes('rates')
+        ->createData($product)
+        ->toArray();
 
-        return $this->sendJson($product, 200);
+        // RETURN RESPONSE
+        $this->jsonResponse($product, 200);
     }
 
     public function updateAction()
     {
-        $userId    = $this->request->getHeader('userId');
-        $productId = $this->dispatcher->getParam('id');
-
-        $product = Products::findFirst([
-            'conditions' => "id = $productId AND user_id = $userId",
-            'for_update' => true,
-        ]);
-
-        if(!$product)
-            return $this->notFoundResponse();
-        
-        $updated = $product->update(
-            $this->request->getPut(), 
-            array('code', 'name', 'description', 'price')
+        // CREATE DATA TRANSFER OBJECT
+        $productDTO = new ProductDTO(
+            $this->dispatcher->getParam('id'),
+            $this->request->getHeader('userId'),
+            $this->request->getPut('code'),
+            $this->request->getPut('name'),
+            $this->request->getPut('description'),
+            $this->request->getPut('price')
         );
 
-        if(!$updated)
-            return $this->notFoundResponse();
+        // PASS DTO TO UPDATE PRODUCT SERVICE
+        $product = $this->productService->updateProduct($productDTO);
 
-        return $this->successfulUdatingResponse();
+        // RETURN SUCCESSFULL RESPONSE
+        $this->handleSuccessResponse("Updated successfully");
     }
 
 }
