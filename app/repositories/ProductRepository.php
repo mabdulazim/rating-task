@@ -6,7 +6,6 @@ use App\Models\Products;
 
 class ProductRepository extends Repository
 {
-
     public function __construct()
     {
         $this->model = new Products();
@@ -26,7 +25,11 @@ class ProductRepository extends Repository
             "conditions" => "id = $productId AND user_id = $userId",
             "for_update" => true
         ]);
-        return $product->update($data);
+
+        if($product)
+            return $product->update($data);
+
+        return false;
     }
 
 }

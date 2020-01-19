@@ -18,6 +18,6 @@ class NotFoundException
         $response->setContentType('application/json');
         $response->setJsonContent(['message' => 'Not found']);
         $response->send();
-        return $false;
+        return false;
     }
 }

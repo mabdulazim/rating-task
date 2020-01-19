@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DTOs\ProductDTO;
 use App\Repositories\ProductRepository;
 use App\Exceptions\ValidationException;
+use App\Exceptions\NotFoundException;
 
 class ProductService {
 
@@ -17,7 +18,12 @@ class ProductService {
 
     public function getProductById($productId)
     {
-        return $this->productRepository->getById($productId);
+        $product = $this->productRepository->getById($productId);
+
+        if(!$product)
+            throw new NotFoundException("Product not found");
+
+        return $product;
     }
 
     public function getProducts($code)
@@ -27,11 +33,16 @@ class ProductService {
 
     public function updateProduct(ProductDTO $productDTO)
     {
-        return $this->productRepository->updateByProductIdUserId(
+        $updated = $this->productRepository->updateByProductIdUserId(
             $productDTO->productId, 
             $productDTO->userId, 
             $productDTO->toArray()
         );
+
+        if($updated === false)
+            throw new NotFoundException("Product not found");
+
+        return $updated;
     }
     
 

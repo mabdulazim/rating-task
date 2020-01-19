@@ -87,7 +87,7 @@ class ProductsController extends ControllerBase
         );
 
         // PASS DTO TO UPDATE PRODUCT SERVICE
-        $product = $this->productService->updateProduct($productDTO);
+        $this->productService->updateProduct($productDTO);
 
         // RETURN SUCCESSFULL RESPONSE
         $this->handleSuccessResponse("Updated successfully");

@@ -6,12 +6,12 @@ use App\Services\RateService;
 class RatesController extends ControllerBase
 {
     public function storeAction()
-    {
+    {        
         // CREATE DATA TRANSFER OBJECT
         $rateDTO = new RateDTO(
             $this->dispatcher->getParam('id'),
             $this->request->getHeader('userId'),
-            $this->request->getPost('rate')
+            $this->request->getJsonRawBody(true)['rate']
         );
 
         // PASS DTO TO ADD RATE SERVICE
@@ -19,7 +19,7 @@ class RatesController extends ControllerBase
         $rateService->addRate($rateDTO);
 
         // RETURN SUCCESSFULL RESPONSE
-        return $this->handleSuccessResponse("Rated successfully", 200);
+        $this->handleSuccessResponse("Rated successfully", 200);
     }
 
 }

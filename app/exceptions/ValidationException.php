@@ -14,10 +14,10 @@ class ValidationException
 
     public function handle($messages)
     {
-        $errors = [];
+        $errorss = [];
 
         foreach ($messages as $message) {
-            $errors[] = $message->getMessage();
+            $errorss[] = $message->getMessage();
         }
     
         $response = new Response();
@@ -25,7 +25,7 @@ class ValidationException
         $response->setContentType('application/json');
         $response->setJsonContent([
             'message' => 'invalid data',
-            'erros'   => $errors,
+            'erros'   => $errorss,
         ]);
         $response->send();
         return false;
