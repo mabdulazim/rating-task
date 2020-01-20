@@ -107,7 +107,6 @@ Request body params
 - `app/transformers` - Contains transformers layers
 - `app/repositories` - Contains db queries
 - `app/models` - Contains models
-- `app/exceptions` - Contains error handling
 
 
 
