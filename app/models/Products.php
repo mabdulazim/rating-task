@@ -2,6 +2,11 @@
 
 namespace App\Models;
 
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Digit as DigitValidator;
+use Phalcon\Validation\Validator\StringLength;
+use Phalcon\Validation\Validator\Regex as RegexValidator;
+
 class Products extends \Phalcon\Mvc\Model
 {
 
@@ -40,6 +45,49 @@ class Products extends \Phalcon\Mvc\Model
      * @var integer
      */
     public $user_id;
+
+    /**
+     * Validations and business logic
+     *
+     * @return boolean
+     */
+    public function validation()
+    {
+        $validator = new Validation();
+
+        $validator->add(
+            "code",
+            new RegexValidator(
+                [
+                    "pattern" => "/^[0-9]{6}$/",
+                    "message" => "code must be 6 digits"
+                ]
+            )
+        );
+
+        $validator->add(
+            "name",
+            new StringLength(
+                [
+                    "max"             => 150,
+                    "min"             => 10,
+                    "messageMaximum"  => "max length for name is 150 chars",
+                    "messageMinimum"  => "min length for name is 10 chars",
+                ]
+            )
+        );        
+
+        $validator->add(
+            "price",
+            new DigitValidator(
+                [
+                    "message" => "Price must be numeric."
+                ]
+            )
+        );
+
+        return $this->validate($validator);
+    }
 
     /**
      * Initialize method for model.

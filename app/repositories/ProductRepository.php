@@ -26,8 +26,10 @@ class ProductRepository extends Repository
             "for_update" => true
         ]);
 
-        if($product)
-            return $product->update($data);
+        if($product) {
+            $product->update($data);
+            return $product;
+        }
 
         return false;
     }

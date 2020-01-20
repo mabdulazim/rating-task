@@ -33,13 +33,17 @@ class ProductService {
 
     public function updateProduct(ProductDTO $productDTO)
     {
-        $updated = $this->productRepository->updateByProductIdUserId(
+        $product = $this->productRepository->updateByProductIdUserId(
             $productDTO->productId, 
             $productDTO->userId, 
             $productDTO->toArray()
         );
 
-        if($updated === false)
+        // CHECK VALIDATIONS
+        if($product && $product->getMessages())
+            throw new ValidationException($product->getMessages());
+
+        if($product === false)
             throw new NotFoundException("Product not found");
 
         return $updated;
