@@ -101,6 +101,7 @@ Request body params
 ## Folders
 
 - `app/config/router.php` - Contains api routes defined in router.php file
+- `app/config/dispatcher.php` - Contains exception handling in dispatcher.php file
 - `app/controllers` - Contains http controllers
 - `app//dtos` - Contains data transfer objects layers
 - `app/services` - Contains business logic layers
