@@ -4,8 +4,7 @@ namespace App\Services;
 
 use App\DTOs\ProductDTO;
 use App\Repositories\ProductRepository;
-use App\Exceptions\ValidationException;
-use App\Exceptions\NotFoundException;
+use \Phalcon\Mvc\Dispatcher\Exception;
 
 class ProductService {
 
@@ -21,7 +20,7 @@ class ProductService {
         $product = $this->productRepository->getById($productId);
 
         if(!$product)
-            throw new NotFoundException("Product not found");
+            throw new Exception("product not found", 404);
 
         return $product;
     }
@@ -41,12 +40,12 @@ class ProductService {
 
         // CHECK VALIDATIONS
         if($product && $product->getMessages())
-            throw new ValidationException($product->getMessages());
+            throw new Exception($product->getMessages()[0]->getMessage(), 400);
 
         if($product === false)
-            throw new NotFoundException("Product not found");
+            throw new Exception("product not found", 404);
 
-        return $updated;
+        return true;
     }
     
 
